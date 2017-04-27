@@ -1,0 +1,76 @@
+//object that sets the default text
+var defaultText = {
+  text:"# Type in Markdown styling to preview it \n Rendered by **marked**."
+}
+
+//take the texts in textarea with Markdown styling and show it in preview box using external Mark library
+function showInPreview(input){
+  //marked is external method that converts Markdown formatting into html
+  document.getElementById('preview').innerHTML = marked(input);
+}
+
+//Editor component that returns textarea and updates accordingly
+class Editor extends React.Component{
+  constructor(props){
+    super(props);
+    this.state = {
+      text:defaultText['text']
+    };
+    this.handleChange = this.handleChange.bind(this);
+  }
+  
+  //on any change, update text to be the value of what's in textarea
+  //also calls the props onChange method
+  handleChange(event){
+    this.setState({text:event.target.value});
+    this.props.onChange(event.target.value)
+  }
+  
+  render(){ 
+    //show in preview defaultText
+    showInPreview(this.state.text);
+    return( 
+      <textarea 
+        className = 'editor'
+        rows = '20'
+        value = {this.state.text} 
+        onChange={this.handleChange}>
+      </textarea>
+    );    
+  }
+}
+
+//parent component Display that manage Editor and previewBox
+class Display extends React.Component{
+  constructor(props){
+    super(props);
+    this.state = {
+      displayText:""
+    };
+    this.handleTextChange = this.handleTextChange.bind(this);
+  }
+  
+  //handles the text change by updating displayText
+  handleTextChange(val){
+    this.setState({
+      displayText:val
+    })
+  }
+  
+  render(){
+    //show in in preview
+    showInPreview(this.state.displayText);
+    return (
+      //show it in editor
+      <div>
+        <Editor value={this.state.displayText} onChange={this.handleTextChange}/>
+      </div>
+    )
+  }
+}
+
+//render in container
+ReactDOM.render(
+  <Display/>
+  , document.getElementById('editorDiv')
+);
